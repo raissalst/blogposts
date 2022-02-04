@@ -42,7 +42,14 @@ def read_posts():
 
 
 def read_one_post(post_id):
-    ...
+    try:
+        post_filtered = Post.filter_post(post_id)
+        return jsonify(post_filtered), HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message
+
+
 
 
 def update_post(post_id):
