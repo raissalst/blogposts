@@ -20,7 +20,7 @@ def create_post():
         del new_post_dict["_id"]
         return jsonify(new_post_dict), HTTPStatus.CREATED
     except TypeError:
-        return {"available_keys": os.getenv('VALID_KEYS').split(","), "wrong_keys_sent": wrong_keys}
+        return {"available_keys": os.getenv('VALID_KEYS').split(","), "wrong_keys_sent": wrong_keys}, HTTPStatus.BAD_REQUEST
 
 def read_posts():
     ...
