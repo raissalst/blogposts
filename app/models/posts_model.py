@@ -1,6 +1,6 @@
 import datetime
 import pymongo
-# from app.exc.wrong_keys_error import WrongKeysError
+from app.exc.wrong_keys_error import WrongKeysError
 import os
 
 database_name = os.getenv("DATABASE")
