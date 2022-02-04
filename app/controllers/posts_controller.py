@@ -16,7 +16,6 @@ def create_post():
     try:
         new_post = Post(**data)
         new_post.new_post()
-        Post.serialize_posts(new_post)
         new_post_dict = new_post.__dict__
         del new_post_dict["_id"]
         return jsonify(new_post_dict), HTTPStatus.CREATED
@@ -29,8 +28,6 @@ def read_posts():
     if len(list_of_posts) == 0:
         empty_table = os.getenv("EMPTY_TABLE_RETURN")
         return empty_table, HTTPStatus.OK
-
-    Post.serialize_posts(list_of_posts)
 
     for item in list_of_posts:
         del item["_id"]
