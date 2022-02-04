@@ -1,7 +1,6 @@
 import datetime
 import pymongo
-from app.exc.wrong_keys_error import WrongKeysError
-from app.services.posts_services import increment_id
+# from app.exc.wrong_keys_error import WrongKeysError
 import os
 
 database_name = os.getenv("DATABASE")
@@ -15,7 +14,7 @@ class Post:
     def __init__(
         self, title: str, author: str, tags: list[str], content: str
     ) -> None:
-        self.id = increment_id()
+        self.id = self.increment_id()
         self.created_at = datetime.datetime.utcnow()
         self.updated_at = datetime.datetime.utcnow()
         self.title = str(title)
@@ -25,6 +24,10 @@ class Post:
 
     def post_posts(self):
         db.get_collection(database_collection).insert_one(self.__dict__)
+    
+    def increment_id(self):
+        posts_list = list(db.get_collection(database_collection).find())
+        return posts_list[-1]["id"] + 1 if len(posts_list) != 0 else 1
 
     @staticmethod
     def serialize_posts(data):
