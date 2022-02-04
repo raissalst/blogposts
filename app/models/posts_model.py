@@ -22,7 +22,7 @@ class Post:
         self.tags = tags
         self.content = str(content)
 
-    def post_posts(self):
+    def new_post(self):
         db.get_collection(database_collection).insert_one(self.__dict__)
     
     def increment_id(self):
@@ -70,3 +70,14 @@ class Post:
         updated_post = db.get_collection(database_collection).find_one_and_update({"id": id}, {"$set": data}, return_document=True)
         
         return updated_post
+
+    @classmethod
+    def check_keys_received(cls, received_keys: list):
+        array_of_wrong_keys = []
+        array_of_valid_keys = os.getenv('VALID_KEYS').split(",")
+
+        for key in received_keys:
+            if key not in array_of_valid_keys:
+                array_of_wrong_keys.append(key)
+        
+        return array_of_wrong_keys
