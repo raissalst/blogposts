@@ -1,6 +1,5 @@
 import datetime
 import pymongo
-from app.exc.not_list_type_error import NotListTypeError
 from app.exc.not_found_error import NotFoundError
 import os
 from app.services.posts_services import check_if_is_list
@@ -23,13 +22,6 @@ class Post:
         self.author = str(author).title()
         self.tags = check_if_is_list(tags)
         self.content = str(content).capitalize()
-
-    
-    # def check_if_is_list(self, tags):
-    #     if type(tags) == list:
-    #         return tags
-    #     else:
-    #         raise NotListTypeError
     
     def increment_id(self):
         posts_list = list(db.get_collection(database_collection).find())
@@ -62,10 +54,8 @@ class Post:
         else:
             raise NotFoundError
     
-    # @staticmethod
     @classmethod
     def update_post(cls, id, data):
-        print("***************************",(data.get("tags")))
         if data.get("tags"):
             check_if_is_list(data["tags"])
 

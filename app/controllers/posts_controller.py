@@ -27,6 +27,7 @@ def create_post():
     except NotListTypeError as e:
         return e.message
 
+
 def read_posts():
     list_of_posts = list(Post.get_posts())
 
