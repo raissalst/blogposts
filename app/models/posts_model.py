@@ -55,7 +55,11 @@ class Post:
     @staticmethod
     def delete_post(id):
         deleted_post = db.get_collection(database_collection).find_one_and_delete({"id": id})
-        return deleted_post
+        if deleted_post != None:
+            del deleted_post["_id"]
+            return deleted_post
+        else:
+            raise NotFoundError
     
     @staticmethod
     def filter_post(id):
