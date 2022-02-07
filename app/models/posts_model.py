@@ -18,17 +18,21 @@ class Post:
         self.id = self.increment_id()
         self.created_at = datetime.datetime.utcnow()
         self.updated_at = datetime.datetime.utcnow()
-        self.title = str(title)
-        self.author = str(author)
-        self.tags = tags
-        self.content = str(content)
+        self.title = str(title).title()
+        self.author = str(author).title()
+        self.tags = tags if type(tags) == list else self.not_list_type()
+        self.content = str(content).capitalize()
 
-    def new_post(self):
-        db.get_collection(database_collection).insert_one(self.__dict__)
+    
+    def not_list_type(self):
+        raise NotListTypeError
     
     def increment_id(self):
         posts_list = list(db.get_collection(database_collection).find())
         return posts_list[-1]["id"] + 1 if len(posts_list) != 0 else 1
+
+    def new_post(self):
+            db.get_collection(database_collection).insert_one(self.__dict__)
 
     # @staticmethod
     # def serialize_posts(data):
@@ -62,15 +66,6 @@ class Post:
     
     @staticmethod
     def update_post(id, data):
-        array_of_keys_requested = data.keys()
-        array_of_wrong_keys = []
-        array_of_right_keys = ["title", "author", "tags", "content"]
-        for key in array_of_keys_requested:
-            if key not in array_of_right_keys:
-                array_of_wrong_keys.append(key)
-        
-        if len(array_of_wrong_keys) != 0:
-            raise WrongKeysError(array_of_wrong_keys)
 
         data["updated_at"] = datetime.datetime.utcnow()
         updated_post = db.get_collection(database_collection).find_one_and_update({"id": id}, {"$set": data}, return_document=True)
