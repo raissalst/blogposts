@@ -50,8 +50,19 @@ def read_one_post(post_id):
 
 
 def update_post(post_id):
-    ...
+    data = request.get_json()
 
+    keys_entered = data.keys()
+    wrong_keys = Post.check_keys_received(keys_entered)
+
+    if len(wrong_keys) != 0:
+        return {"available_keys": os.getenv('VALID_KEYS').split(","), "wrong_keys_sent": wrong_keys}, HTTPStatus.BAD_REQUEST
+
+    try:
+        is_post_there = Post.filter_post(post_id)
+    except NotFoundError as e:
+        return e.message
+    
 
 def delete_post(post_id):
     ...
