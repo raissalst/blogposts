@@ -3,6 +3,7 @@ import pymongo
 from app.exc.not_list_type_error import NotListTypeError
 from app.exc.not_found_error import NotFoundError
 import os
+from app.services.posts_services import check_if_is_list
 
 database_name = os.getenv("DATABASE")
 database_collection = os.getenv("DATABASE_COLLECTION")
@@ -20,15 +21,15 @@ class Post:
         self.updated_at = datetime.datetime.utcnow()
         self.title = str(title).title()
         self.author = str(author).title()
-        self.tags = self.check_if_is_list(tags)
+        self.tags = check_if_is_list(tags)
         self.content = str(content).capitalize()
 
     
-    def check_if_is_list(self, tags):
-        if type(tags) == list:
-            return tags
-        else:
-            raise NotListTypeError
+    # def check_if_is_list(self, tags):
+    #     if type(tags) == list:
+    #         return tags
+    #     else:
+    #         raise NotListTypeError
     
     def increment_id(self):
         posts_list = list(db.get_collection(database_collection).find())
@@ -36,16 +37,6 @@ class Post:
 
     def new_post(self):
             db.get_collection(database_collection).insert_one(self.__dict__)
-
-    # @staticmethod
-    # def serialize_posts(data):
-    #     if type(data) is list:
-    #         for post in data:
-    #             post.update({"_id": str(post["_id"])})
-    #     elif type(data) is Post:
-    #         data._id = str(data._id)
-    #     elif type(data) is dict:
-    #         data.update({"_id": str(data["_id"])})   
 
     @staticmethod
     def get_posts():
@@ -74,9 +65,9 @@ class Post:
     # @staticmethod
     @classmethod
     def update_post(cls, id, data):
-
+        print("***************************",(data.get("tags")))
         if data.get("tags"):
-            cls.check_if_is_list(data.get("tags"))
+            check_if_is_list(data["tags"])
 
         data["updated_at"] = datetime.datetime.utcnow()
         updated_post = db.get_collection(database_collection).find_one_and_update({"id": id}, {"$set": data}, return_document=True)

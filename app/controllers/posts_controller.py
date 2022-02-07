@@ -20,8 +20,12 @@ def create_post():
         new_post_dict = new_post.__dict__
         del new_post_dict["_id"]
         return jsonify(new_post_dict), HTTPStatus.CREATED
+
     except TypeError:
         return {"available_keys": os.getenv('VALID_KEYS').split(","), "wrong_keys_sent": wrong_keys}, HTTPStatus.BAD_REQUEST
+
+    except NotListTypeError as e:
+        return e.message
 
 def read_posts():
     list_of_posts = list(Post.get_posts())
@@ -59,7 +63,7 @@ def update_post(post_id):
 
     try:
         is_post_there = Post.filter_post(post_id)
-        new_updated_post = Post.update_post(id, data)
+        new_updated_post = Post.update_post(post_id, data)
         del new_updated_post["_id"]
         return jsonify(new_updated_post), HTTPStatus.OK
 

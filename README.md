@@ -113,6 +113,8 @@ _Possible errors:_
 
 _1.- Wrong keys error (STATUS 400)_
 
+_2.- Tags not of list type (STATUS 400)_
+
 <h3 align="center">***Update blog post***</h3>
 
 It is allowed to update the content of any key (author, title, tags, content) of a blog post.
