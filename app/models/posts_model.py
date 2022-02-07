@@ -1,6 +1,6 @@
 import datetime
 import pymongo
-from app.exc.wrong_keys_error import WrongKeysError
+from app.exc.not_list_type_error import NotListTypeError
 from app.exc.not_found_error import NotFoundError
 import os
 
@@ -20,12 +20,15 @@ class Post:
         self.updated_at = datetime.datetime.utcnow()
         self.title = str(title).title()
         self.author = str(author).title()
-        self.tags = tags if type(tags) == list else self.not_list_type()
+        self.tags = self.check_if_is_list(tags)
         self.content = str(content).capitalize()
 
     
-    def not_list_type(self):
-        raise NotListTypeError
+    def check_if_is_list(self, tags):
+        if type(tags) == list:
+            return tags
+        else:
+            raise NotListTypeError
     
     def increment_id(self):
         posts_list = list(db.get_collection(database_collection).find())
@@ -64,8 +67,12 @@ class Post:
         else:
             raise NotFoundError
     
-    @staticmethod
-    def update_post(id, data):
+    # @staticmethod
+    @classmethod
+    def update_post(cls, id, data):
+
+        if data.get("tags"):
+            cls.check_if_is_list(data.get("tags"))
 
         data["updated_at"] = datetime.datetime.utcnow()
         updated_post = db.get_collection(database_collection).find_one_and_update({"id": id}, {"$set": data}, return_document=True)
