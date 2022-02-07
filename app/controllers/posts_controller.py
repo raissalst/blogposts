@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from app.exc.not_found_error import NotFoundError
+from app.exc.not_list_type_error import NotListTypeError
 from app.models.posts_model import Post
 from http import HTTPStatus
 import os
@@ -47,8 +48,6 @@ def read_one_post(post_id):
         return e.message
 
 
-
-
 def update_post(post_id):
     data = request.get_json()
 
@@ -60,9 +59,21 @@ def update_post(post_id):
 
     try:
         is_post_there = Post.filter_post(post_id)
+        new_updated_post = Post.update_post(id, data)
+        del new_updated_post["_id"]
+        return jsonify(new_updated_post), HTTPStatus.OK
+
     except NotFoundError as e:
+        return e.message
+
+    except NotListTypeError as e:
         return e.message
     
 
 def delete_post(post_id):
-    ...
+    try:
+        deleted_post = Post.delete_post(post_id)
+        return jsonify(deleted_post), HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message
